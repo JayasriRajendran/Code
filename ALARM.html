@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ALARM CLOCK</title>
+    <link rel="stylesheet" href="class.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="icon" href="logo.png" />
+</head>
+
+<body id="body">
+    <div class="frame" id="clock">
+        <div class="format" id="hour"></div>
+        <div class="format" id="minute"></div>
+        <div class="format" id="second"></div>
+    </div>
+    <div class="frame" id="alarm">
+        <input class="input" id="hrs" value="" placeholder="H">
+        <input class="input" id="min" value="" placeholder="M">
+        <input class="input" id="sec" value="" placeholder="S">
+    </div>
+    <button class="show" id="show" onclick="show()">SET ALARM</button>
+    <div class="info" id="info"></div>
+    <button class="stop" id="stop" onclick="stop()">STOP</button>
+</body>
+<script>
+    var hour = "00",
+    min = "00",
+    sec = "00",
+    Ah = "",
+    Am = "",
+    As = "",
+    set;
+var audio = new Audio(
+    'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
+document.getElementById("hour").innerHTML = hour;
+document.getElementById("minute").innerHTML = min;
+document.getElementById("second").innerHTML = sec;
+
+var button = document.getElementById("show"),
+    alarm = document.getElementById("alarm"),
+    h = document.getElementById("hrs"),
+    m = document.getElementById("min"),
+    s = document.getElementById("sec"),
+    info = document.getElementById("info");
+alarm.style.display = "none";
+setInterval(() => {
+    var d = new Date();
+    hour = d.getHours();
+    min = d.getMinutes();
+    sec = d.getSeconds();
+    parseInt(hour) >= 12 ? hour = parseInt(hour) - 12 : hour;
+    hour < 10 ? hour = "0" + hour : hour;
+    min < 10 ? min = "0" + min : min;
+    sec < 10 ? sec = "0" + sec : sec;
+    document.getElementById("hour").innerHTML = hour;
+    document.getElementById("minute").innerHTML = min;
+    document.getElementById("second").innerHTML = sec;
+    checkAlarm();
+}, 1000)
+
+function checkAlarm() {
+    if (hour == Ah && min == Am && sec == As) {
+        console.log("ALARM ON");
+        play();
+    }
+}
+
+function play() {
+    var i = 0;
+    document.getElementById("stop").style.display = "block";
+    set = setInterval(() => {
+        i++;
+        audio.play();
+        if (i % 2 == 0) {
+            document.getElementById("body").style.backgroundColor = "gold"
+            document.getElementById("clock").classList.remove("alarm");
+            document.getElementById("clock").classList.add("alarm2");
+        } else {
+            document.getElementById("body").style.backgroundColor = "orange"
+            document.getElementById("clock").classList.remove("alarm2");
+            document.getElementById("clock").classList.add("alarm")
+        }
+    }, 50);
+    setTimeout(() => {
+        stop();
+    }, 20 * 1000)
+}
+
+function stop() {
+    clearInterval(set);
+    document.getElementById("body").style.backgroundColor = "white"
+    document.getElementById("clock").classList.remove("alarm2");
+    document.getElementById("clock").classList.remove("alarm");
+    document.getElementById("stop").style.display = "none";
+    info.innerHTML = "";
+    console.log("ALARM WENT OFF");
+}
+
+function show() {
+    if (alarm.style.display == "none") {
+        alarm.style.display = "block";
+        button.classList.add("showActive");
+    } else if (alarm.style.display == "block") {
+        if (h.value == "" && m.value == "" && s.value == "") {
+            console.log("None");
+            info.innerHTML = "";
+        } else {
+            Ah = h.value;
+            Am = m.value;
+            As = s.value;
+            info.innerHTML = "Alarm set to - " + Ah + ":" + Am + ":" + As;
+            console.log("Alarm set to - " + Ah + ":" + Am + ":" + As);
+            info.style.display = "block";
+            h.value = "";
+            m.value = "";
+            s.value = "";
+        }
+        button.classList.remove("showActive");
+        alarm.style.display = "none";
+
+    }
+}
+</script>
+
+</html>
